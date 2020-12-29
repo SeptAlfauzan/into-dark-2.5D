@@ -7,6 +7,7 @@ public class PlayerCombat : MonoBehaviour
     // Start is called before the first frame update
     public Transform Sword;
     public Animator swordAnimator;
+    public Transform trailRenderer;
     void Start()
     {
         // Sword = gameObject.transform.GetChild(0).gameObject.transform.GetChild(0).gameObject;
@@ -19,11 +20,13 @@ public class PlayerCombat : MonoBehaviour
         if (Input.GetAxis("Fire1") > 0)
         {
             Sword.GetComponent<SpriteRenderer>().enabled = true;
+            trailRenderer.GetComponent<TrailRenderer>().enabled = true;
             swordAnimator.SetTrigger("Attack");
         }   
     }
 
     public void EnableRenderer(){
         Sword.GetComponent<SpriteRenderer>().enabled = false;
+        trailRenderer.GetComponent<TrailRenderer>().enabled = false;
     }
 }

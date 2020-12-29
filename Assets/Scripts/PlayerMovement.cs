@@ -8,22 +8,23 @@ public class PlayerMovement : MonoBehaviour
     public Rigidbody playerRb;
     public Vector3 movement;
 
-    GameObject playerSprite;
+    public GameObject playerSprite;
 
     GameObject playerpointLight;
-    bool isRotated = false; 
-    GameObject spriteSword; 
+    bool isFlipped = false; 
 
     bool IsGrounded = false;//boolean when player collide with ground
     Vector3 jumpVector = new Vector3(0,1,0);
+    Vector3 newPlayerLocalScale;//reference for new player localscale
     public float jumpForce;
+
+    public ParticleSystem landingParticle;
     // Quaternion rotateOffset = new Quaternion(70f, 180f, 0f);
     // Start is called before the first frame update
     void Start()
     {
         playerRb = GetComponent<Rigidbody>();
-        playerSprite = gameObject.transform.GetChild(0).gameObject;
-        spriteSword = playerSprite.transform.GetChild(0).gameObject;
+        newPlayerLocalScale = new Vector3(1,1,1);
     }
 
     // Update is called once per frame
@@ -47,22 +48,24 @@ public class PlayerMovement : MonoBehaviour
     private void FixedUpdate() {
         playerRb.velocity = new Vector3(movement.x, playerRb.velocity.y, movement.z);
     }
-
     private void RotateDirection(float xAxis) {
-        var swordLocalPos = spriteSword.transform.localPosition;
-        if (xAxis < 0)
-        {
-            playerSprite.transform.GetComponent<SpriteRenderer>().flipX = true;
-            spriteSword.transform.GetComponent<SpriteRenderer>().flipX = true;
-            spriteSword.transform.localPosition = new Vector3(-0.3f,swordLocalPos.y, swordLocalPos.z); 
-    
-        }else{
-            playerSprite.transform.GetComponent<SpriteRenderer>().flipX = false;
-            spriteSword.transform.GetComponent<SpriteRenderer>().flipX = false;
-            spriteSword.transform.localPosition = new Vector3(0.3f,swordLocalPos.y, swordLocalPos.z); 
-
+        if (xAxis < 0 && !isFlipped)
+        {//change variable reference value base on player x axis value(right or left move)
+            isFlipped = true;
+            newPlayerLocalScale = new Vector3(-1,1,1); 
         }
+        if(xAxis > 0 && isFlipped){
+            isFlipped = false;
+            newPlayerLocalScale = new Vector3(1,1,1); 
+        }
+        FlipPlayerObject(newPlayerLocalScale);
     }
+
+
+    private void FlipPlayerObject(Vector3 newLocalScale){
+        playerSprite.transform.localScale = newLocalScale;
+    }
+
 
     private void OnCollisionStay(Collision collider) {
         if (collider.gameObject.tag == "Ground")
@@ -70,6 +73,26 @@ public class PlayerMovement : MonoBehaviour
             IsGrounded = true;
         }
     }
+
+    private void OnCollisionExit(Collision collider) {
+        if (collider.gameObject.tag == "Ground")
+        {
+            IsGrounded = false;
+            Debug.Log("Player on Air");
+        }
+    }
+
+    private void OnCollisionEnter(Collision collider) {
+        if (collider.gameObject.tag == "Ground")
+        {
+            if (!landingParticle.isEmitting)//check wheter landing particle is not emiting 
+            {
+                landingParticle.Play();//play landing particle
+            }
+        }
+    }
+
+
 
     private void Jump(){
         playerRb.AddForce(Vector3.up*jumpForce, ForceMode.Impulse);
