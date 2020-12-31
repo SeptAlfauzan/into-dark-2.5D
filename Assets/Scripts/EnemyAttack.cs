@@ -24,9 +24,7 @@ public class EnemyAttack : MonoBehaviour
         foreach (var player in players)
         {
             player.GetComponentInParent<Player>().TakeDamaged(1);
-        }
-
-        
+        }     
     }
 
     private void OnDrawGizmosSelected() {

@@ -41,7 +41,6 @@ public class EnemyDetection : MonoBehaviour
             }        
         }else{
             StopChase();
-            GetComponent<Enemy>().RegenHealth();//regen health if player to far from enemy
         }
     }
     private void FlipPlayerObject(Vector3 newLocalScale){

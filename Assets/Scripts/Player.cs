@@ -8,6 +8,7 @@ public class Player : MonoBehaviour
     public float maxhealth = 100;
     float currentHealth;
     Rigidbody rigidbody;
+    float regenTimer = 0f;
 
     public Animator animator;
     void Start()
@@ -44,9 +45,7 @@ public class Player : MonoBehaviour
     void Die(){
         Debug.Log("die");
         Destroy(gameObject);
+        GameObject.Find("TransitionScreen").transform.GetComponent<GameManager>().GameOver();//call gameover fucntion from gamemanager script
     }
 
-    public void RegenHealth(){
-        currentHealth += 2;
-    }
 }

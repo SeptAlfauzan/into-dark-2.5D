@@ -48,10 +48,6 @@ public class Enemy : MonoBehaviour
         Debug.Log("die");
         Destroy(gameObject, dieParticle.main.duration);
     }
-
-    public void RegenHealth(){
-        currentHealth += 2;
-    }
     
 
     private void OnCollisionStay(Collision other) {

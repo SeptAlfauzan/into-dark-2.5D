@@ -3,33 +3,24 @@ using UnityEngine.SceneManagement;
 public class GameManager : MonoBehaviour
 {
     public bool isGameEnded = false;
-    Transform player;
+    GameObject[] enemies;
+
+    Animator gameOverAnim;
     private void Start() {
-        player = GameObject.Find("PlayerObject").transform;
+        enemies = GameObject.FindGameObjectsWithTag("Enemy");
+        gameOverAnim = GameObject.Find("TransitionScreen").transform.GetComponent<Animator>();
     }
     public void GameOver(){
-        if (!isGameEnded)
-        {
-           
-        }
+        gameOverAnim.SetTrigger("GameOver");//trigger fade out animation)
     }
+
+    public void LoadGameOverScene(){//use when gameoverAnim is ended
+        SceneManager.LoadScene("GameOver");
+    } 
 
     private void Update() {
-        if (player.position.y <= -3)
-            {
-                Restart();
-            }
+        if(enemies.Length == 0){
+            GameOver();//if enemies are 0 game over 
+        }
     }
-
-    void Restart(){
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-    }
-
-    void GameOverMsg(){
-
-    }
-
-    public bool getIsEnded(){
-        return isGameEnded;
-    } 
 }
