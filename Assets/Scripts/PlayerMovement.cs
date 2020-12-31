@@ -17,12 +17,15 @@ public class PlayerMovement : MonoBehaviour
     Vector3 jumpVector = new Vector3(0,1,0);
     Vector3 newPlayerLocalScale;//reference for new player localscale
     public float jumpForce;
+    Animator animator;//animator for player
+    public Animator camAnim;
 
     public ParticleSystem landingParticle;
-    // Quaternion rotateOffset = new Quaternion(70f, 180f, 0f);
+    public ParticleSystem runParticle;
     // Start is called before the first frame update
     void Start()
     {
+        animator = transform.GetChild(0).GetComponent<Animator>();
         playerRb = GetComponent<Rigidbody>();
         newPlayerLocalScale = new Vector3(1,1,1);
     }
@@ -36,13 +39,22 @@ public class PlayerMovement : MonoBehaviour
 
         RotateDirection(movement.x);
         movement*= speed;
+        //intantiate run animation
+        RunAnimate(movement.x, movement.z);
 
         if (Input.GetKeyDown(KeyCode.Space) && IsGrounded)
         {
-            IsGrounded = false;
+            IsGrounded = false;//change isGrounded value to false then jump
             Jump();
         }
-        Debug.Log(IsGrounded);
+    }
+
+    void RunAnimate(float movementX, float movementZ){
+        int speed = 0;//speed variable to instantiate run animation
+        var movementXAbs = Mathf.Abs(movementX);//get absolute value from x axis
+        var movementZAbs = Mathf.Abs(movementZ);//get absolute value from z axis
+        speed = movementXAbs > 0 || movementZAbs > 0? 1: -1; // if movement X or Z abs greeater than 0, then assigned 1 to speed variable, and otherwise assign -
+        animator.SetFloat("Run",speed);
     }
 
     private void FixedUpdate() {
@@ -70,15 +82,20 @@ public class PlayerMovement : MonoBehaviour
     private void OnCollisionStay(Collision collider) {
         if (collider.gameObject.tag == "Ground")
         {
+            if(!runParticle.isEmitting){//if run particle is not emmiting play particle
+                runParticle.Play();
+            }
             IsGrounded = true;
         }
     }
 
     private void OnCollisionExit(Collision collider) {
         if (collider.gameObject.tag == "Ground")
-        {
+        {//stop particle when player jump on ground
+            if(runParticle.isEmitting){//if run particle is emmiting stop particle
+                runParticle.Stop();
+            }
             IsGrounded = false;
-            Debug.Log("Player on Air");
         }
     }
 
@@ -87,6 +104,8 @@ public class PlayerMovement : MonoBehaviour
         {
             if (!landingParticle.isEmitting)//check wheter landing particle is not emiting 
             {
+                //camera shake effect
+                Camera.main.GetComponent<FollowPlayer>().Shake(1f, 10);
                 landingParticle.Play();//play landing particle
             }
         }
