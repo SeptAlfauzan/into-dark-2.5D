@@ -7,20 +7,29 @@ public class GameManager : MonoBehaviour
 
     Animator gameOverAnim;
     private void Start() {
-        enemies = GameObject.FindGameObjectsWithTag("Enemy");
+        
         gameOverAnim = GameObject.Find("TransitionScreen").transform.GetComponent<Animator>();
     }
     public void GameOver(){
         gameOverAnim.SetTrigger("GameOver");//trigger fade out animation)
     }
+    public void Winning(){
+        gameOverAnim.SetTrigger("Winning");//trigger fade out animation)
+    }
 
     public void LoadGameOverScene(){//use when gameoverAnim is ended
         SceneManager.LoadScene("GameOver");
     } 
+    public void LoadWinningScene(){//use when gameoverAnim is ended
+        SceneManager.LoadScene("Winning");
+    } 
+
+
 
     private void Update() {
+        enemies = GameObject.FindGameObjectsWithTag("Enemy");
         if(enemies.Length == 0){
-            GameOver();//if enemies are 0 game over 
+            Winning();//if enemies are 0 game over 
         }
     }
 }

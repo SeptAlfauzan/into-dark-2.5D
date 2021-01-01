@@ -6,7 +6,7 @@ public class EnemyDetection : MonoBehaviour
 {
     Transform PlayerObject;
     float distanceToPlayer;
-    Rigidbody rigidbody;
+    new Rigidbody rigidbody;
     Animator animator;
 
     float enemyAttackRange;
@@ -14,6 +14,7 @@ public class EnemyDetection : MonoBehaviour
     public float moveSpeed = 1f;
     bool isFlipped = false;
     Vector3 newLocalScale;
+
 
     // Start is called before the first frame update
     void Start()
@@ -23,6 +24,7 @@ public class EnemyDetection : MonoBehaviour
         animator = GetComponent<Animator>();
         rigidbody = GetComponent<Rigidbody>();
         PlayerObject = GameObject.Find("PlayerObject").transform.GetChild(0);
+
     }
 
     // Update is called once per frame
@@ -36,7 +38,6 @@ public class EnemyDetection : MonoBehaviour
             ChasePlayer();
             if(distanceToPlayer < enemyAttackRange){
                 StopChase();
-                animator.SetTrigger("Attack");
                 GetComponent<EnemyAttack>().Attack();
             }        
         }else{

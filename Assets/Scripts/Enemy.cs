@@ -1,23 +1,34 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Enemy : MonoBehaviour
 {
     // Start is called before the first frame update
     public float maxhealth;
     float currentHealth;
-    Rigidbody rigidbody;
+    new Rigidbody rigidbody;
     public ParticleSystem walkParticle;
     public ParticleSystem landingParticle;
 
     public ParticleSystem dieParticle;
 
     public Animator animator;
+
+    public HealthBarBehaviour healthBar;
+    public AudioSource bloodSfx;
     void Start()
     {
         rigidbody = GetComponent<Rigidbody>();
         currentHealth = maxhealth;
+        //set halthbar to enemy
+        healthBar.SetMaxHealth(maxhealth);
+
+    }
+
+    private void Update() {
+        healthBar.SetHealthBarActivated(currentHealth < maxhealth);
     }
 
     private void FixedUpdate() {
@@ -31,14 +42,16 @@ public class Enemy : MonoBehaviour
         animator.SetTrigger("Attacked");
         //Decrease enemy health
         currentHealth -= damage;
+        //set healthbar value
+        healthBar.SetHealth(currentHealth);
         //knock back enemy
-        rigidbody.AddForce(new Vector3(rigidbody.position.x, 0, rigidbody.position.z));
         rigidbody.AddForce(Vector3.up*1f, ForceMode.Impulse);
         
         
         if(currentHealth <= 0){
             if(!dieParticle.isEmitting){
                 dieParticle.Play();//start blood particle
+                bloodSfx.Play();//play sfx
             }
             Die();
         }

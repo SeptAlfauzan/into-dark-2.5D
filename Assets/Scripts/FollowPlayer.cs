@@ -5,7 +5,7 @@ using UnityEngine;
 public class FollowPlayer : MonoBehaviour
 {
     public Transform playerTransform;
-    Camera camera;
+    new Camera camera;
     public Vector3 offSet; 
     // Start is called before the first frame update
     void Start()

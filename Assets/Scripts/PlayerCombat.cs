@@ -42,7 +42,7 @@ public class PlayerCombat : MonoBehaviour
         foreach (var enemy in enemies)
         {
             Debug.Log(enemy.name);
-            enemy.GetComponent<Enemy>().TakeDamaged(10);
+            enemy.GetComponent<Enemy>().TakeDamaged(5);
         }
     }
 
